@@ -5,6 +5,7 @@ from prefect.artifacts import create_markdown_artifact
 
 @task
 def get_data(url):
+    """Gets data from a given url"""
     try:
         response = requests.get(url)
         response.raise_for_status()
@@ -15,6 +16,13 @@ def get_data(url):
 
 @task
 def update_data(data):
+    """
+    Updates data by updating the id field and filters desired fields
+
+    Args: a list of dicts recieved from external api
+
+    Returns: updated list
+    """
     desired_fields = ['PatientId', 'PatientName', 'Collection']
     updated_record = []
     for record in data:
@@ -24,12 +32,8 @@ def update_data(data):
     return updated_record
 
 @task
-def print_data(data):
-    for record in data:
-        print(record)
-
-@task
 def create_markdown(data):
+    """Leverages create_markdown_artifact to create artifact in prefect"""
     markdown_report = "| PatientId | PatientName | Collection |\n"
     markdown_report += "|-----------|-------------|------------|\n"
     for record in data:
