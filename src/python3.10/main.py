@@ -28,6 +28,18 @@ def print_data(data):
     for record in data:
         print(record)
 
+@task
+def create_markdown(data):
+    markdown_report = "| PatientId | PatientName | Collection |\n"
+    markdown_report += "|-----------|-------------|------------|\n"
+    for record in data:
+        markdown_report += f"| {record['PatientId']} | {record['PatientName']} | {record['Collection']} |\n"
+    create_markdown_artifact(
+        key="collection-report",
+        markdown=markdown_report,
+        description="simplified records of patient name with collection and unique identifier",
+    )
+
 @flow
 def main():
     request_date = '2010/08/16'
@@ -36,7 +48,7 @@ def main():
         data = get_data(url)
         if data:
             data = update_data(data)
-            print_data(data)
+            create_markdown(data)
         else:
             print(f"No data to process for date: {request_date}")
     except Exception as e:
